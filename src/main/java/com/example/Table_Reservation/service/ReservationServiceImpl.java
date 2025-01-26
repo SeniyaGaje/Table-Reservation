@@ -1,10 +1,10 @@
-package com.example.Table_Reservation.service.impl;
+package com.example.Table_Reservation.service;
 
 import com.example.Table_Reservation.dto.request.ReservationRequestDTO;
 import com.example.Table_Reservation.dto.response.ReservationResponseDTO;
 import com.example.Table_Reservation.entity.Reservation;
 import com.example.Table_Reservation.repository.ReservationRepository;
-import com.example.Table_Reservation.service.ReservationService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +19,10 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponseDTO createReservation(ReservationRequestDTO requestDTO) {
-        Reservation reservation = mapToEntity(requestDTO);
+        Reservation reservation = new Reservation();
+        BeanUtils.copyProperties(requestDTO, reservation);
         Reservation savedReservation = reservationRepository.save(reservation);
         return mapToResponseDTO(savedReservation);
-    }
-
-    @Override
-    public List<ReservationResponseDTO> getAllReservations() {
-        return reservationRepository.findAll().stream()
-                .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -39,65 +33,32 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<ReservationResponseDTO> getAllReservations() {
+        return reservationRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ReservationResponseDTO updateReservation(Long id, ReservationRequestDTO requestDTO) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Reservation not found"));
-        updateEntity(reservation, requestDTO);
+        BeanUtils.copyProperties(requestDTO, reservation);
         Reservation updatedReservation = reservationRepository.save(reservation);
         return mapToResponseDTO(updatedReservation);
     }
 
     @Override
     public void deleteReservation(Long id) {
-        Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
-        reservationRepository.delete(reservation);
-    }
-
-    private Reservation mapToEntity(ReservationRequestDTO requestDTO) {
-        Reservation reservation = new Reservation();
-        reservation.setReservationTitle(requestDTO.getReservationTitle());
-        reservation.setFirstName(requestDTO.getFirstName());
-        reservation.setLastName(requestDTO.getLastName());
-        reservation.setEmail(requestDTO.getEmail());
-        reservation.setMobile(requestDTO.getMobile());
-        reservation.setEmergencyMobile(requestDTO.getEmergencyMobile());
-        reservation.setDate(requestDTO.getDate());
-        reservation.setReservationStartTime(requestDTO.getReservationStartTime());
-        reservation.setReservationEndTime(requestDTO.getReservationEndTime());
-        reservation.setNumberOfPeople(requestDTO.getNumberOfPeople());
-        reservation.setReservedTableNumbers(requestDTO.getReservedTableNumbers());
-        reservation.setStatus(requestDTO.getStatus());
-        reservation.setRemarks(requestDTO.getRemarks());
-        return reservation;
+        if (!reservationRepository.existsById(id)) {
+            throw new RuntimeException("Reservation not found");
+        }
+        reservationRepository.deleteById(id);
     }
 
     private ReservationResponseDTO mapToResponseDTO(Reservation reservation) {
         ReservationResponseDTO responseDTO = new ReservationResponseDTO();
-        responseDTO.setId(reservation.getId());
-        responseDTO.setReservationTitle(reservation.getReservationTitle());
-        responseDTO.setFirstName(reservation.getFirstName());
-        responseDTO.setLastName(reservation.getLastName());
-        responseDTO.setEmail(reservation.getEmail());
-        responseDTO.setMobile(reservation.getMobile());
-        responseDTO.setReservedTableNumbers(reservation.getReservedTableNumbers());
-        responseDTO.setStatus(reservation.getStatus());
+        BeanUtils.copyProperties(reservation, responseDTO);
         return responseDTO;
-    }
-
-    private void updateEntity(Reservation reservation, ReservationRequestDTO requestDTO) {
-        reservation.setReservationTitle(requestDTO.getReservationTitle());
-        reservation.setFirstName(requestDTO.getFirstName());
-        reservation.setLastName(requestDTO.getLastName());
-        reservation.setEmail(requestDTO.getEmail());
-        reservation.setMobile(requestDTO.getMobile());
-        reservation.setEmergencyMobile(requestDTO.getEmergencyMobile());
-        reservation.setDate(requestDTO.getDate());
-        reservation.setReservationStartTime(requestDTO.getReservationStartTime());
-        reservation.setReservationEndTime(requestDTO.getReservationEndTime());
-        reservation.setNumberOfPeople(requestDTO.getNumberOfPeople());
-        reservation.setReservedTableNumbers(requestDTO.getReservedTableNumbers());
-        reservation.setStatus(requestDTO.getStatus());
-        reservation.setRemarks(requestDTO.getRemarks());
     }
 }

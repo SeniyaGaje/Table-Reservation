@@ -1,6 +1,9 @@
 package com.example.Table_Reservation.dto.response;
 
-import lombok.Data;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 public class ReservationResponseDTO {
@@ -10,6 +13,12 @@ public class ReservationResponseDTO {
     private String lastName;
     private String email;
     private String mobile;
+    private String emergencyMobile;
+    private LocalDate date;
+    private LocalTime reservationStartTime;
+    private LocalTime reservationEndTime;
+    private Integer numberOfPeople;
     private String reservedTableNumbers;
-    private String status;
+    private Integer status;
+    private String remarks;
 }
