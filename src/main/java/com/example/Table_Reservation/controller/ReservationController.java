@@ -42,4 +42,12 @@ public class ReservationController {
         reservationService.deleteReservation(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<ReservationResponseDTO>> filterReservations(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            @RequestParam("status") Integer status) {
+        return ResponseEntity.ok(reservationService.filterReservations(startDate, endDate, status));
+    }
 }

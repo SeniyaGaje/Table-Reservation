@@ -11,4 +11,5 @@ public interface ReservationService {
     List<ReservationResponseDTO> getAllReservations();
     ReservationResponseDTO updateReservation(Long id, ReservationRequestDTO requestDTO);
     void deleteReservation(Long id);
+    List<ReservationResponseDTO> filterReservations(String startDate, String endDate, Integer status);
 }

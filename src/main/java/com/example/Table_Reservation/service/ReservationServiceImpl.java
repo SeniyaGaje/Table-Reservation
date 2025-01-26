@@ -8,6 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,15 @@ public class ReservationServiceImpl implements ReservationService {
             throw new RuntimeException("Reservation not found");
         }
         reservationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<ReservationResponseDTO> filterReservations(String startDate, String endDate, Integer status) {
+        List<Reservation> reservations = reservationRepository.filterReservations(
+                LocalDate.parse(startDate), LocalDate.parse(endDate), status);
+        return reservations.stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     private ReservationResponseDTO mapToResponseDTO(Reservation reservation) {
