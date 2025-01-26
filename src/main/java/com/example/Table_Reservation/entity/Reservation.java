@@ -3,14 +3,13 @@ package com.example.Table_Reservation.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
 @Entity
-@Table(name = "reservations",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"reservedTableNumbers", "date", "reservationStartTime", "reservationEndTime"}))
-
+@Table(name = "reservations", uniqueConstraints = @UniqueConstraint(columnNames = {"reservedTableNumbers", "date", "reservationStartTime", "reservationEndTime"}))
 public class Reservation {
 
     @Id

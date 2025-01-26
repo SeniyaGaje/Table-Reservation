@@ -3,6 +3,7 @@ package com.example.Table_Reservation.service;
 import com.example.Table_Reservation.dto.request.ReservationRequestDTO;
 import com.example.Table_Reservation.dto.response.ReservationResponseDTO;
 import com.example.Table_Reservation.entity.Reservation;
+import com.example.Table_Reservation.exception.ReservationNotFoundException;
 import com.example.Table_Reservation.repository.ReservationRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationResponseDTO getReservationById(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation with ID " + id + " not found"));
         return mapToResponseDTO(reservation);
     }
 
@@ -43,7 +44,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationResponseDTO updateReservation(Long id, ReservationRequestDTO requestDTO) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation with ID " + id + " not found"));
         BeanUtils.copyProperties(requestDTO, reservation);
         Reservation updatedReservation = reservationRepository.save(reservation);
         return mapToResponseDTO(updatedReservation);
@@ -52,7 +53,7 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public void deleteReservation(Long id) {
         if (!reservationRepository.existsById(id)) {
-            throw new RuntimeException("Reservation not found");
+            throw new ReservationNotFoundException("Reservation with ID " + id + " not found");
         }
         reservationRepository.deleteById(id);
     }
