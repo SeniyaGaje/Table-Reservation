@@ -2,7 +2,6 @@ package com.example.Table_Reservation.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
